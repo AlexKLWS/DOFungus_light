@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Linq;
-using MoonSharp.Interpreter;
 
 namespace Fungus
 {
@@ -160,15 +159,6 @@ namespace Fungus
             block.StartExecution();
         }
 
-        protected IEnumerator CallLuaClosure(LuaEnvironment luaEnv, Closure callback)
-        {
-            yield return new WaitForEndOfFrame();
-            if (callback != null)
-            {
-                luaEnv.RunLuaFunction(callback, true);
-            }
-        }
-
         /// <summary>
         /// Clear all displayed options in the Menu Dialog.
         /// </summary>
@@ -251,34 +241,6 @@ namespace Fungus
         }
 
         /// <summary>
-        /// Adds the option to the list of displayed options, calls a Lua function when selected.
-        /// Will cause the Menu dialog to become visible if it is not already visible.
-        /// </summary>
-        /// <returns><c>true</c>, if the option was added successfully.</returns>
-        public virtual bool AddOption(string text, bool interactable, LuaEnvironment luaEnv, Closure callBack)
-        {
-            if (!gameObject.activeSelf)
-            {
-                gameObject.SetActive(true);
-            }
-
-            // Copy to local variables 
-            LuaEnvironment env = luaEnv;
-            Closure call = callBack;
-            UnityEngine.Events.UnityAction action = delegate
-            {
-                StopAllCoroutines();
-                // Stop timeout
-                Clear();
-                HideSayDialog();
-                // Use a coroutine to call the callback on the next frame
-                StartCoroutine(CallLuaClosure(env, call));
-            };
-
-            return AddOption(text, interactable, false, action);
-        }
-
-        /// <summary>
         /// Adds the option to the list of displayed options. Calls a Block when selected.
         /// Will cause the Menu dialog to become visible if it is not already visible.
         /// </summary>
@@ -331,46 +293,6 @@ namespace Fungus
                 gameObject.SetActive(true);
                 StopAllCoroutines();
                 StartCoroutine(WaitForTimeout(duration, targetBlock));
-            }
-        }
-
-        /// <summary>
-        /// Show a timer during which the player can select an option. Calls a Lua function when the timer expires.
-        /// </summary>
-        public virtual IEnumerator ShowTimer(float duration, LuaEnvironment luaEnv, Closure callBack)
-        {
-            if (CachedSlider == null ||
-                duration <= 0f)
-            {
-                yield break;
-            }
-
-            CachedSlider.gameObject.SetActive(true);
-            StopAllCoroutines();
-
-            float elapsedTime = 0;
-            Slider timeoutSlider = CachedSlider;
-
-            while (elapsedTime < duration)
-            {
-                if (timeoutSlider != null)
-                {
-                    float t = 1f - elapsedTime / duration;
-                    timeoutSlider.value = t;
-                }
-
-                elapsedTime += Time.deltaTime;
-
-                yield return null;
-            }
-
-            Clear();
-            gameObject.SetActive(false);
-            HideSayDialog();
-
-            if (callBack != null)
-            {
-                luaEnv.RunLuaFunction(callBack, true);
             }
         }
 
