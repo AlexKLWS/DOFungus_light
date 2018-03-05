@@ -12,7 +12,7 @@ Goal of this project, is to make Fungus more lightweight and robust, as well as 
 
 **Features:**
 
-* Replaces LeanTween & iTween with DOTween
+* Replaced LeanTween & iTween with DOTween
 * Removed Lua support
 * Removed usfxr
 * Removed Spine & Playmaker integrations
