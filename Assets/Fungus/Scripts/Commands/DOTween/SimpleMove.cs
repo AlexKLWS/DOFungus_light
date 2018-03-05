@@ -1,21 +1,20 @@
-﻿
+﻿using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
-using System.Collections;
-using System;
 
 namespace Fungus
 {
+
     /// <summary>
     /// Moves a game object to a specified position over time. The position can be defined by a transform in another object (using To Transform) or by setting an absolute position (using To Position, if To Transform is set to None).
     /// </summary>
-    [CommandInfo("LeanTween",
+    [CommandInfo("DOTween",
                  "Move",
                  "Moves a game object to a specified position over time. The position can be defined by a transform in another object (using To Transform) or by setting an absolute position (using To Position, if To Transform is set to None).")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
-    public class MoveLean : BaseLeanTweenCommand
+    public class SimpleMove : BaseDOTweenCommand
     {
+
         [Tooltip("Target transform that the GameObject will move to")]
         [SerializeField]
         protected TransformData _toTransform;
@@ -27,18 +26,18 @@ namespace Fungus
         [Tooltip("Whether to animate in world space or relative to the parent. False by default.")]
         [SerializeField]
         protected bool isLocal;
-        
 
-        public override LTDescr ExecuteTween()
+
+        public override Tween ExecuteTween()
         {
-            var loc = _toTransform.Value == null ? _toPosition.Value : _toTransform.Value.position;
+            Vector3 loc = _toTransform.Value == null ? _toPosition.Value : _toTransform.Value.position;
 
-            if(IsInAddativeMode)
+            if (IsInAddativeMode)
             {
                 loc += _targetObject.Value.transform.position;
             }
 
-            if(IsInFromMode)
+            if (IsInFromMode)
             {
                 var cur = _targetObject.Value.transform.position;
                 _targetObject.Value.transform.position = loc;
@@ -46,10 +45,9 @@ namespace Fungus
             }
 
             if (isLocal)
-                return LeanTween.moveLocal(_targetObject.Value, loc, _duration);
+                return _targetObject.Value.transform.DOLocalMove(loc, _duration);
             else
-                return LeanTween.move(_targetObject.Value, loc, _duration);
+                return _targetObject.Value.transform.DOMove(loc, _duration);
         }
-        
     }
 }

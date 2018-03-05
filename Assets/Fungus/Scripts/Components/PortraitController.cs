@@ -5,6 +5,7 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -198,11 +199,11 @@ namespace Fungus
             portraitImage.sprite = character.ProfileSprite;
             portraitImage.color = new Color(1f, 1f, 1f, 0f);
 
-            // LeanTween doesn't handle 0 duration properly
+            // LeanTween doesn't handle 0 duration properly, just in case doing the same for DOTween
             float duration = (fadeDuration > 0f) ? fadeDuration : float.Epsilon;
 
             // Fade in character image (first time)
-            LeanTween.alpha(portraitImage.transform as RectTransform, 1f, duration).setEase(stage.FadeEaseType);
+            portraitImage.DOFade(1f, duration).SetEase(stage.FadeEaseType);
 
             // Tell character about portrait image
             character.State.portraitImage = portraitImage;
@@ -268,11 +269,11 @@ namespace Fungus
         {
             CleanPortraitOptions(options);
 
-            // LeanTween doesn't handle 0 duration properly
+            // LeanTween doesn't handle 0 duration properly, just in case doing the same for DOTween
             float duration = (options.moveDuration > 0f) ? options.moveDuration : float.Epsilon;
 
-            // LeanTween.move uses the anchoredPosition, so all position images must have the same anchor position
-            LeanTween.move(options.character.State.portraitImage.gameObject, options.toPosition.position, duration).setEase(stage.FadeEaseType);
+            // All position images must have the same anchor position
+            options.character.State.portraitImage.rectTransform.DOAnchorPos3D(options.toPosition.position, duration).SetEase(stage.FadeEaseType);
 
             if (options.waitUntilFinished)
             {
@@ -438,7 +439,7 @@ namespace Fungus
 
             SetupPortrait(options);
 
-            // LeanTween doesn't handle 0 duration properly
+            // LeanTween doesn't handle 0 duration properly, just in case doing the same for DOTween
             float duration = (options.fadeDuration > 0f) ? options.fadeDuration : float.Epsilon;
 
             // Fade out a duplicate of the existing portrait image
@@ -454,7 +455,7 @@ namespace Fungus
                 tempImage.preserveAspect = true;
                 tempImage.color = options.character.State.portraitImage.color;
 
-                LeanTween.alpha(tempImage.rectTransform, 0f, duration).setEase(stage.FadeEaseType).setOnComplete(() => {
+                tempImage.DOFade(0f, duration).SetEase(stage.FadeEaseType).OnComplete(() => {
                     Destroy(tempGO);
                 });
             }
@@ -465,7 +466,7 @@ namespace Fungus
             {
                 options.character.State.portraitImage.sprite = options.portrait;
                 options.character.State.portraitImage.color = new Color(1f, 1f, 1f, 0f);
-                LeanTween.alpha(options.character.State.portraitImage.rectTransform, 1f, duration).setEase(stage.FadeEaseType);
+                options.character.State.portraitImage.DOFade(1f, duration).SetEase(stage.FadeEaseType);
             }
 
             DoMoveTween(options);
@@ -549,10 +550,10 @@ namespace Fungus
 
             SetupPortrait(options);
 
-            // LeanTween doesn't handle 0 duration properly
+            // LeanTween doesn't handle 0 duration properly, just in case doing the same for DOTween
             float duration = (options.fadeDuration > 0f) ? options.fadeDuration : float.Epsilon;
 
-            LeanTween.alpha(options.character.State.portraitImage.rectTransform, 0f, duration).setEase(stage.FadeEaseType);
+            options.character.State.portraitImage.DOFade(0f, duration).SetEase(stage.FadeEaseType);
 
             DoMoveTween(options);
 
@@ -582,10 +583,10 @@ namespace Fungus
 
             Color targetColor = dimmedState ? stage.DimColor : Color.white;
 
-            // LeanTween doesn't handle 0 duration properly
+            // LeanTween doesn't handle 0 duration properly, just in case doing the same for DOTween
             float duration = (stage.FadeDuration > 0f) ? stage.FadeDuration : float.Epsilon;
 
-            LeanTween.color(character.State.portraitImage.rectTransform, targetColor, duration).setEase(stage.FadeEaseType);
+            character.State.portraitImage.DOColor(targetColor, duration).SetEase(stage.FadeEaseType);
         }
 
         #endregion

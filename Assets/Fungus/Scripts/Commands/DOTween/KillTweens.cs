@@ -1,19 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using DG.Tweening;
 using UnityEngine;
-
 
 namespace Fungus
 {
     /// <summary>
-    /// 
+    /// Stops the LeanTweens on a target GameObject
     /// </summary> 
-    [CommandInfo("LeanTween",
+    [CommandInfo("DOTween",
                  "StopTweens",
                  "Stops the LeanTweens on a target GameObject")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
-    public class StopTweensLean : Command
+    public class KillTweens : Command
     {
         [Tooltip("Target game object stop LeanTweens on")]
         [SerializeField]
@@ -23,7 +21,7 @@ namespace Fungus
         {
             if (_targetObject.Value != null)
             {
-                LeanTween.cancel(_targetObject.Value);
+                DOTween.Kill(_targetObject.Value);
             }
 
             Continue();

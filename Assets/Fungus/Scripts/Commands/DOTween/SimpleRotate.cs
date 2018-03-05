@@ -1,20 +1,18 @@
-﻿
+﻿using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
-using System.Collections;
-using System;
 
 namespace Fungus
 {
     /// <summary>
     /// Rotates a game object to the specified angles over time.
     /// </summary>
-    [CommandInfo("LeanTween",
+    [CommandInfo("DOTween",
                  "Rotate",
                  "Rotates a game object to the specified angles over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
-    public class RotateLean : BaseLeanTweenCommand
+
+    public class SimpleRotate : BaseDOTweenCommand
     {
         [Tooltip("Target transform that the GameObject will rotate to")]
         [SerializeField]
@@ -28,26 +26,26 @@ namespace Fungus
         [SerializeField]
         protected bool isLocal;
 
-        public enum RotateMode { PureRotate, LookAt2D, LookAt3D}
+        public enum RotateMode { PureRotate, LookAt2D, LookAt3D }
         [Tooltip("Whether to use the provided Transform or Vector as a target to look at rather than a euler to match.")]
         [SerializeField]
         protected RotateMode rotateMode = RotateMode.PureRotate;
 
 
-        public override LTDescr ExecuteTween()
+        public override Tween ExecuteTween()
         {
-            var rot = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.rotation.eulerAngles;
+            Vector3 rot = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.rotation.eulerAngles;
 
-            if(rotateMode == RotateMode.LookAt3D)
+            if (rotateMode == RotateMode.LookAt3D)
             {
-                var pos = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.position;
-                var dif = pos - _targetObject.Value.transform.position;
+                Vector3 pos = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.position;
+                Vector3 dif = pos - _targetObject.Value.transform.position;
                 rot = Quaternion.LookRotation(dif.normalized).eulerAngles;
             }
-            else if(rotateMode == RotateMode.LookAt2D)
+            else if (rotateMode == RotateMode.LookAt2D)
             {
-                var pos = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.position;
-                var dif = pos - _targetObject.Value.transform.position;
+                Vector3 pos = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.position;
+                Vector3 dif = pos - _targetObject.Value.transform.position;
                 dif.z = 0;
 
                 rot = Quaternion.FromToRotation(_targetObject.Value.transform.up, dif.normalized).eulerAngles;
@@ -60,15 +58,15 @@ namespace Fungus
 
             if (IsInFromMode)
             {
-                var cur = _targetObject.Value.transform.rotation.eulerAngles;
+                Vector3 cur = _targetObject.Value.transform.rotation.eulerAngles;
                 _targetObject.Value.transform.rotation = Quaternion.Euler(rot);
                 rot = cur;
             }
 
             if (isLocal)
-                return LeanTween.rotateLocal(_targetObject.Value, rot, _duration);
+                return _targetObject.Value.transform.DOLocalRotate(rot, _duration);
             else
-                return LeanTween.rotate(_targetObject.Value, rot, _duration);
+                return _targetObject.Value.transform.DORotate(rot, _duration);
         }
     }
 }

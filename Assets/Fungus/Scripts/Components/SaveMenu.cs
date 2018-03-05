@@ -6,6 +6,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -54,7 +55,7 @@ namespace Fungus
 
         protected AudioSource clickAudioSource;
 
-        protected LTDescr fadeTween;
+        protected Tween fadeTween;
 
         protected static SaveMenu instance;
 
@@ -192,7 +193,7 @@ namespace Fungus
         {
             if (fadeTween != null)
             {
-                LeanTween.cancel(fadeTween.id, true);
+                DOTween.Kill(fadeTween.id, true);
                 fadeTween = null;
             }
 

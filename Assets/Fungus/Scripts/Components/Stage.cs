@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -30,7 +31,7 @@ namespace Fungus
         [SerializeField] protected float moveDuration = 1f;
 
         [Tooltip("Ease type for the fade tween.")]
-        [SerializeField] protected LeanTweenType fadeEaseType;
+        [SerializeField] protected Ease fadeEaseType;
 
         [Tooltip("Constant offset to apply to portrait position.")]
         [SerializeField] protected Vector2 shiftOffset;
@@ -117,7 +118,7 @@ namespace Fungus
         /// <summary>
         /// Ease type for the fade tween.
         /// </summary>
-        public virtual LeanTweenType FadeEaseType { get { return fadeEaseType; } }
+        public virtual Ease FadeEaseType { get { return fadeEaseType; } }
 
         /// <summary>
         /// Constant offset to apply to portrait position.

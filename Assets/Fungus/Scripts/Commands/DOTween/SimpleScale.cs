@@ -1,20 +1,18 @@
-﻿
+﻿using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
-using System.Collections;
-using System;
+
 
 namespace Fungus
 {
     /// <summary>
     /// Changes a game object's scale to a specified value over time.
     /// </summary>
-    [CommandInfo("LeanTween",
+    [CommandInfo("DOTween",
                  "Scale",
                  "Changes a game object's scale to a specified value over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
-    public class ScaleLean : BaseLeanTweenCommand
+    public class SimpleScale : BaseDOTweenCommand
     {
         [Tooltip("Target transform that the GameObject will scale to")]
         [SerializeField]
@@ -24,7 +22,7 @@ namespace Fungus
         [SerializeField]
         protected Vector3Data _toScale = new Vector3Data(Vector3.one);
 
-        public override LTDescr ExecuteTween()
+        public override Tween ExecuteTween()
         {
             var sc = _toTransform.Value == null ? _toScale.Value : _toTransform.Value.localScale;
 
@@ -40,7 +38,7 @@ namespace Fungus
                 sc = cur;
             }
 
-            return LeanTween.scale(_targetObject.Value, sc, _duration);
+            return _targetObject.Value.transform.DOScale(sc, _duration);
         }
     }
 }

@@ -1,8 +1,7 @@
-// This code is part of the Fungus library (http://fungusgames.com) maintained by Chris Gregan (http://twitter.com/gofungus).
-// It is released for free under the MIT open source license (https://github.com/snozbot/fungus/blob/master/LICENSE)
-
 ﻿using UnityEngine;
+using DG.Tweening;
 using UnityEngine.UI;
+
 
 namespace Fungus
 {
@@ -21,10 +20,11 @@ namespace Fungus
     /// Fades a UI object.
     /// </summary>
     [CommandInfo("UI",
-                 "Fade UI",
-                 "Fades a UI object")]
-    public class FadeUI : TweenUI 
+                 "DOFade UI",
+                 "Fades an UI object using DOTween")]
+    public class DOFadeUI : DOTweenUI
     {
+
         [SerializeField] protected FadeMode fadeMode = FadeMode.Alpha;
 
         [SerializeField] protected ColorData targetColor = new ColorData(Color.white);
@@ -56,10 +56,10 @@ namespace Fungus
                     switch (fadeMode)
                     {
                         case FadeMode.Alpha:
-                            LeanTween.alpha(image.rectTransform, targetAlpha, duration).setEase(tweenType).setEase(tweenType);
+                            image.DOFade(targetAlpha, duration).SetEase(tweenType);
                             break;
                         case FadeMode.Color:
-                            LeanTween.color(image.rectTransform, targetColor, duration).setEase(tweenType).setEase(tweenType);
+                            image.DOColor(targetColor, duration).SetEase(tweenType);
                             break;
                     }
                 }
@@ -88,10 +88,10 @@ namespace Fungus
                     switch (fadeMode)
                     {
                         case FadeMode.Alpha:
-                            LeanTween.textAlpha(text.rectTransform, targetAlpha, duration).setEase(tweenType);
+                            text.DOFade(targetAlpha, duration).SetEase(tweenType);
                             break;
                         case FadeMode.Color:
-                            LeanTween.textColor(text.rectTransform, targetColor, duration).setEase(tweenType);
+                            text.DOColor(targetColor, duration).SetEase(tweenType);
                             break;
                     }
                 }
@@ -120,10 +120,10 @@ namespace Fungus
                     switch (fadeMode)
                     {
                         case FadeMode.Alpha:
-                            LeanTween.alpha(go, targetAlpha, duration).setEase(tweenType);
+                            textMesh.GetComponent<Renderer>().material.DOFade(targetAlpha, duration).SetEase(tweenType);
                             break;
                         case FadeMode.Color:
-                            LeanTween.color(go, targetColor, duration).setEase(tweenType);
+                            textMesh.GetComponent<Renderer>().material.DOColor(targetColor, duration).SetEase(tweenType);
                             break;
                     }
                 }
@@ -138,7 +138,7 @@ namespace Fungus
             }
             else if (fadeMode == FadeMode.Color)
             {
-                return targetColor.Value.ToString()  + " color";
+                return targetColor.Value.ToString() + " color";
             }
 
             return "";

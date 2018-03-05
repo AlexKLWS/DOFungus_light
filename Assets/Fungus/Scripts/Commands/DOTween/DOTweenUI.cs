@@ -1,28 +1,30 @@
-// This code is part of the Fungus library (http://fungusgames.com) maintained by Chris Gregan (http://twitter.com/gofungus).
-// It is released for free under the MIT open source license (https://github.com/snozbot/fungus/blob/master/LICENSE)
-
-﻿using UnityEngine;
+﻿using DG.Tweening;
 using System.Collections.Generic;
-using Fungus;
+using UnityEngine;
 
 namespace Fungus
 {
     /// <summary>
     /// Abstract base class for TweenUI commands.
     /// </summary>
-    public abstract class TweenUI : Command 
+    public abstract class DOTweenUI : Command
     {
+
         [Tooltip("List of objects to be affected by the tween")]
-        [SerializeField] protected List<GameObject> targetObjects = new List<GameObject>();
-        
+        [SerializeField]
+        protected List<GameObject> targetObjects = new List<GameObject>();
+
         [Tooltip("Type of tween easing to apply")]
-        [SerializeField] protected LeanTweenType tweenType = LeanTweenType.easeOutQuad;
-        
+        [SerializeField]
+        protected Ease tweenType = Ease.OutQuad;
+
         [Tooltip("Wait until this command completes before continuing execution")]
-        [SerializeField] protected BooleanData waitUntilFinished = new BooleanData(true);
-        
+        [SerializeField]
+        protected BooleanData waitUntilFinished = new BooleanData(true);
+
         [Tooltip("Time for the tween to complete")]
-        [SerializeField] protected FloatData duration = new FloatData(1f);
+        [SerializeField]
+        protected FloatData duration = new FloatData(1f);
 
         protected virtual void ApplyTween()
         {
@@ -38,7 +40,10 @@ namespace Fungus
 
             if (waitUntilFinished)
             {
-                LeanTween.value(gameObject, 0f, 1f, duration).setOnComplete(OnComplete);
+                //We have to pass some external value, that tween is goimng to inerpolate
+                float intermediateValue = 0f;
+                //This seems to be a hack though
+                DOTween.To(() => intermediateValue, (pNewValue) => intermediateValue = pNewValue, 1f, duration).OnComplete(OnComplete);
             }
         }
 
@@ -63,7 +68,7 @@ namespace Fungus
                 Continue();
                 return;
             }
-            
+
             ApplyTween();
 
             if (!waitUntilFinished)
@@ -95,7 +100,7 @@ namespace Fungus
                 }
                 return targetObjects[0].name + " = " + GetSummaryValue();
             }
-            
+
             string objectList = "";
             for (int i = 0; i < targetObjects.Count; i++)
             {
@@ -113,10 +118,10 @@ namespace Fungus
                     objectList += ", " + go.name;
                 }
             }
-            
+
             return objectList + " = " + GetSummaryValue();
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(180, 250, 250, 255);
