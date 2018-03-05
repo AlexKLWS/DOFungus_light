@@ -2,6 +2,7 @@
 // It is released for free under the MIT open source license (https://github.com/snozbot/fungus/blob/master/LICENSE)
 
 ﻿using UnityEngine;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -43,11 +44,8 @@ namespace Fungus
             {
                 float startVolume = audioSource.volume;
 
-                LeanTween.value(gameObject, startVolume, 0f, fadeDuration)
-                    .setOnUpdate( (v) => {
-                        // Fade out current music
-                        audioSource.volume = v;
-                    }).setOnComplete( () => {
+                DOTween.To(() => audioSource.volume, (pNewValue) => audioSource.volume = pNewValue, 0f, fadeDuration)
+                .OnComplete( () => {
                         // Play new music
                         audioSource.volume = startVolume;
                         audioSource.clip = musicClip;
@@ -88,17 +86,13 @@ namespace Fungus
                 return;
             }
 
-            LeanTween.value(gameObject, 
-                audio.pitch, 
-                pitch, 
-                duration).setOnUpdate( (p) => {
-                    audio.pitch = p;
-                }).setOnComplete( () => {
-                    if (onComplete != null)
-                    {
-                        onComplete();
-                    }
-                });
+            DOTween.To(() => audio.pitch, (pNewValue) => audio.pitch = pNewValue, pitch, duration)
+               .OnComplete(() => {
+                if (onComplete != null)
+                {
+                    onComplete();
+                }
+            });
         }
 
         /// <summary>
@@ -121,17 +115,13 @@ namespace Fungus
                 return;
             }
 
-            LeanTween.value(gameObject, 
-                audio.volume, 
-                volume, 
-                duration).setOnUpdate( (v) => {
-                    audio.volume = v;
-                }).setOnComplete( () => {
-                    if (onComplete != null)
-                    {
-                        onComplete();
-                    }
-                });
+            DOTween.To(() => audio.volume, (pNewValue) => audio.volume = pNewValue, volume, duration)
+               .OnComplete(() => {
+                   if (onComplete != null)
+                   {
+                       onComplete();
+                   }
+               });
         }
 
         /// <summary>

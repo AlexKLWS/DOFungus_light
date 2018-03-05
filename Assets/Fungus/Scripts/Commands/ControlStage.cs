@@ -2,6 +2,7 @@
 // It is released for free under the MIT open source license (https://github.com/snozbot/fungus/blob/master/LICENSE)
 
 using UnityEngine;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -63,9 +64,7 @@ namespace Fungus
                 return;
             }
 
-            LeanTween.value(canvasGroup.gameObject, canvasGroup.alpha, targetAlpha, duration).setOnUpdate( (float alpha) => {
-                canvasGroup.alpha = alpha;
-            }).setOnComplete( () => {
+            canvasGroup.DOFade(targetAlpha, duration).OnComplete(() => {
                 OnComplete();
             });
         }

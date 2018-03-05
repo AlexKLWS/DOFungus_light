@@ -5,6 +5,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using System.Collections.Generic;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -154,12 +155,12 @@ namespace Fungus
 
                 if (returnOnCancelled)
                 {
-                    LeanTween.move(gameObject, startingPosition, returnDuration).setEase(LeanTweenType.easeOutExpo);
+                    transform.DOMove(startingPosition, returnDuration).SetEase(Ease.OutExpo);
                 }
             }
             else if(returnOnCompleted)
             {
-                LeanTween.move(gameObject, startingPosition, returnDuration).setEase(LeanTweenType.easeOutExpo);
+                transform.DOMove(startingPosition, returnDuration).SetEase(Ease.OutExpo);
             }
         }
 

@@ -47,7 +47,7 @@ namespace Fungus
         [SerializeField]
         protected int repeats = 0;
 
-        [Tooltip("Stop any previously LeanTweens on this object before adding this one. Warning; expensive.")]
+        [Tooltip("Stop any previously DOTweens on this object before adding this one. Warning; expensive.")]
         [SerializeField]
         protected bool stopPreviousTweens = false;
 

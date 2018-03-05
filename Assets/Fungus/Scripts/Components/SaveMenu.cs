@@ -200,18 +200,14 @@ namespace Fungus
             if (saveMenuActive)
             {
                 // Switch menu off
-                LeanTween.value(saveMenuGroup.gameObject, saveMenuGroup.alpha, 0f, 0.5f).setOnUpdate( (t) => { 
-                    saveMenuGroup.alpha = t;
-                }).setOnComplete( () => {
-                    saveMenuGroup.alpha = 0f;
+                saveMenuGroup.DOFade(0f, 0.5f).OnComplete(() => {
+                    saveMenuGroup.alpha = 1f;
                 });
             }
             else
             {
                 // Switch menu on
-                LeanTween.value(saveMenuGroup.gameObject, saveMenuGroup.alpha, 1f, 0.5f).setOnUpdate( (t) => { 
-                    saveMenuGroup.alpha = t;
-                }).setOnComplete( () => {
+                saveMenuGroup.DOFade(1f, 0.5f).OnComplete(() => {
                     saveMenuGroup.alpha = 1f;
                 });
             }

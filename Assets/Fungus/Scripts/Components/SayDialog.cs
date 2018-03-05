@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -262,9 +263,9 @@ namespace Fungus
                 var c = activeCharacters[i];
                 if (c.State.portraitImage != null)
                 {
-                    if (LeanTween.isTweening(c.State.portraitImage.gameObject))
+                    if (DOTween.IsTweening(c.State.portraitImage.gameObject))
                     {
-                        LeanTween.cancel(c.State.portraitImage.gameObject, true);
+                        DOTween.Kill(c.State.portraitImage.gameObject, true);
                         PortraitController.SetRectTransform(c.State.portraitImage.rectTransform, c.State.position);
                         if (c.State.dimmed == true)
                         {

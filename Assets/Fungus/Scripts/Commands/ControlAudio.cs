@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 using System.Collections;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -81,14 +82,7 @@ namespace Fungus
             if (fadeDuration > 0)
             {
                 // Fade volume in
-                LeanTween.value(_audioSource.Value.gameObject, 
-                    _audioSource.Value.volume, 
-                    endVolume,
-                    fadeDuration
-                ).setOnUpdate(
-                    (float updateVolume)=>{
-                    _audioSource.Value.volume = updateVolume;
-                });
+                DOTween.To(() => _audioSource.Value.volume, (pNewValue) => _audioSource.Value.volume = pNewValue, endVolume, fadeDuration);
             }
 
             _audioSource.Value.PlayOneShot(_audioSource.Value.clip);
@@ -118,18 +112,14 @@ namespace Fungus
                 _audioSource.Value.volume = 0;
                 _audioSource.Value.loop = true;
                 _audioSource.Value.GetComponent<AudioSource>().Play();
-                LeanTween.value(_audioSource.Value.gameObject,0,endVolume,fadeDuration
-                ).setOnUpdate(
-                    (float updateVolume)=>{
-                    _audioSource.Value.volume = updateVolume;
-                }
-                ).setOnComplete(
-                    ()=>{
-                    if (waitUntilFinished)
-                    {
-                        Continue();
+                DOTween.To(() => _audioSource.Value.volume, (pNewValue) => _audioSource.Value.volume = pNewValue, endVolume, fadeDuration)
+                   .OnComplete(
+                    () => {
+                        if (waitUntilFinished)
+                        {
+                            Continue();
+                        }
                     }
-                }
                 );
             }
             else
@@ -144,12 +134,8 @@ namespace Fungus
         {
             if (fadeDuration > 0)
             {
-                LeanTween.value(_audioSource.Value.gameObject,_audioSource.Value.volume,0,fadeDuration
-                ).setOnUpdate(
-                    (float updateVolume)=>{
-                    _audioSource.Value.volume = updateVolume;
-                }
-                ).setOnComplete(
+                DOTween.To(() => _audioSource.Value.volume, (pNewValue) => _audioSource.Value.volume = pNewValue, 0, fadeDuration)
+                   .OnComplete(
                     ()=>{
 
                     _audioSource.Value.GetComponent<AudioSource>().Pause();
@@ -170,12 +156,8 @@ namespace Fungus
         {
             if (fadeDuration > 0)
             {
-                LeanTween.value(source.gameObject,_audioSource.Value.volume,0,fadeDuration
-                ).setOnUpdate(
-                    (float updateVolume)=>{
-                    source.volume = updateVolume;
-                }
-                ).setOnComplete(
+                DOTween.To(() => _audioSource.Value.volume, (pNewValue) => _audioSource.Value.volume = pNewValue, 0, fadeDuration)
+                .OnComplete(
                     ()=>{
 
                     source.GetComponent<AudioSource>().Stop();
@@ -194,11 +176,9 @@ namespace Fungus
 
         protected virtual void ChangeVolume()
         {
-            LeanTween.value(_audioSource.Value.gameObject,_audioSource.Value.volume,endVolume,fadeDuration
-            ).setOnUpdate(
-                (float updateVolume)=>{
-                _audioSource.Value.volume = updateVolume;
-            }).setOnComplete(
+            
+            DOTween.To(() => _audioSource.Value.volume, (pNewValue) => _audioSource.Value.volume = pNewValue, endVolume, fadeDuration)
+               .OnComplete(
                 ()=>{
                 if (waitUntilFinished)
                 {
