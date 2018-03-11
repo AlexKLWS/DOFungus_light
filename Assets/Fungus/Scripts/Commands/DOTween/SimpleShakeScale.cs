@@ -8,7 +8,7 @@ namespace Fungus
     /// Randomly shakes a GameObject's scale.
     /// </summary>
     [CommandInfo("DOTween",
-                 "Shake Position",
+                 "Shake Scale",
                  "Randomly shakes a GameObject's scale")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
