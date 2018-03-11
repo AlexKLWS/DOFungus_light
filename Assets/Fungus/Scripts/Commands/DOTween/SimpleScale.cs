@@ -26,7 +26,7 @@ namespace Fungus
         {
             var sc = _toTransform.Value == null ? _toScale.Value : _toTransform.Value.localScale;
 
-            if (IsInAddativeMode)
+            if (IsInAdditiveMode)
             {
                 sc += _targetObject.Value.transform.localScale;
             }

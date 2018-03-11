@@ -51,7 +51,7 @@ namespace Fungus
                 rot = Quaternion.FromToRotation(_targetObject.Value.transform.up, dif.normalized).eulerAngles;
             }
 
-            if (IsInAddativeMode)
+            if (IsInAdditiveMode)
             {
                 rot += _targetObject.Value.transform.rotation.eulerAngles;
             }

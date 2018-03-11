@@ -32,7 +32,7 @@ namespace Fungus
         {
             Vector3 loc = _toTransform.Value == null ? _toPosition.Value : _toTransform.Value.position;
 
-            if (IsInAddativeMode)
+            if (IsInAdditiveMode)
             {
                 loc += _targetObject.Value.transform.position;
             }

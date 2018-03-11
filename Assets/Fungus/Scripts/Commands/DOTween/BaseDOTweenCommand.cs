@@ -32,7 +32,7 @@ namespace Fungus
         [Tooltip("Does the tween use the value as a target or as a delta to be added to current.")]
         [SerializeField]
         protected AbsAdd _absAdd;
-        public bool IsInAddativeMode { get { return _absAdd == AbsAdd.Additive; } }
+        public bool IsInAdditiveMode { get { return _absAdd == AbsAdd.Additive; } }
 
 
         [Tooltip("The shape of the easing curve applied to the animation")]
@@ -80,6 +80,8 @@ namespace Fungus
 
 
             ourTween = ExecuteTween();
+
+            ourTween.SetId(_tweenId);
 
             if (repeats != 0)
             {
