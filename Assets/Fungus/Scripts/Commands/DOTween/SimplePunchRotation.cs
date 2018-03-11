@@ -26,13 +26,13 @@ namespace Fungus
         {
             Vector3 rot = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.rotation.eulerAngles;
 
-            if (rotateMode == RotateMode.LookAt3D)
+            if (_rotateType == RotateType.LookAt3D)
             {
                 Vector3 pos = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.position;
                 Vector3 dif = pos - _targetObject.Value.transform.position;
                 rot = Quaternion.LookRotation(dif.normalized).eulerAngles;
             }
-            else if (rotateMode == RotateMode.LookAt2D)
+            else if (_rotateType == RotateType.LookAt2D)
             {
                 Vector3 pos = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.position;
                 Vector3 dif = pos - _targetObject.Value.transform.position;

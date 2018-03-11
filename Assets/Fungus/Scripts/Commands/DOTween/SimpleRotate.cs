@@ -24,25 +24,29 @@ namespace Fungus
 
         [Tooltip("Whether to animate in world space or relative to the parent. False by default.")]
         [SerializeField]
-        protected bool isLocal;
+        protected bool _isLocal;
 
-        public enum RotateMode { PureRotate, LookAt2D, LookAt3D }
+        public enum RotateType { PureRotate, LookAt2D, LookAt3D }
         [Tooltip("Whether to use the provided Transform or Vector as a target to look at rather than a euler to match.")]
         [SerializeField]
-        protected RotateMode rotateMode = RotateMode.PureRotate;
+        protected RotateType _rotateType = RotateType.PureRotate;
+
+        [Tooltip("Rotation mode. Only affects basic rotation")]
+        [SerializeField]
+        protected RotateMode _rotateMode = RotateMode.Fast;
 
 
         public override Tween ExecuteTween()
         {
             Vector3 rot = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.rotation.eulerAngles;
 
-            if (rotateMode == RotateMode.LookAt3D)
+            if (_rotateType == RotateType.LookAt3D)
             {
                 Vector3 pos = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.position;
                 Vector3 dif = pos - _targetObject.Value.transform.position;
                 rot = Quaternion.LookRotation(dif.normalized).eulerAngles;
             }
-            else if (rotateMode == RotateMode.LookAt2D)
+            else if (_rotateType == RotateType.LookAt2D)
             {
                 Vector3 pos = _toTransform.Value == null ? _toRotation.Value : _toTransform.Value.position;
                 Vector3 dif = pos - _targetObject.Value.transform.position;
@@ -63,10 +67,10 @@ namespace Fungus
                 rot = cur;
             }
 
-            if (isLocal)
-                return _targetObject.Value.transform.DOLocalRotate(rot, _duration);
+            if (_isLocal)
+                return _targetObject.Value.transform.DOLocalRotate(rot, _duration, _rotateMode);
             else
-                return _targetObject.Value.transform.DORotate(rot, _duration);
+                return _targetObject.Value.transform.DORotate(rot, _duration, _rotateMode);
         }
     }
 }

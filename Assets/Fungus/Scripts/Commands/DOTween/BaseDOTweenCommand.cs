@@ -37,23 +37,23 @@ namespace Fungus
 
         [Tooltip("The shape of the easing curve applied to the animation")]
         [SerializeField]
-        protected Ease easeType = Ease.OutQuad;
+        protected Ease _easeType = Ease.OutQuad;
 
         [Tooltip("The type of loop to apply once the animation has completed")]
         [SerializeField]
-        protected LoopType loopType = LoopType.Restart;
+        protected LoopType _loopType = LoopType.Restart;
 
         [Tooltip("Number of times to repeat the tween, -1 is infinite.")]
         [SerializeField]
-        protected int repeats = 0;
+        protected int _repeats = 0;
 
         [Tooltip("Stop any previously DOTweens on this object before adding this one. Warning; expensive.")]
         [SerializeField]
-        protected bool stopPreviousTweens = false;
+        protected bool _stopPreviousTweens = false;
 
         [Tooltip("Wait until the tween has finished before executing the next command")]
         [SerializeField]
-        protected bool waitUntilFinished = true;
+        protected bool _waitUntilFinished = true;
 
         [HideInInspector] protected Tween ourTween;
 
@@ -73,7 +73,7 @@ namespace Fungus
                 return;
             }
 
-            if (stopPreviousTweens)
+            if (_stopPreviousTweens)
             {
                 DOTween.Kill(_targetObject.Value);
             }
@@ -83,17 +83,17 @@ namespace Fungus
 
             ourTween.SetId(_tweenId);
 
-            if (repeats != 0)
+            if (_repeats != 0)
             {
-                ourTween.SetEase(easeType)
-                        .SetLoops(repeats, loopType);
+                ourTween.SetEase(_easeType)
+                        .SetLoops(_repeats, _loopType);
             } 
             else 
             {
-                ourTween.SetEase(easeType);
+                ourTween.SetEase(_easeType);
             }
 
-            if (waitUntilFinished)
+            if (_waitUntilFinished)
             {
                 if (ourTween != null)
                 {

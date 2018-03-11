@@ -39,7 +39,7 @@ namespace Fungus
                 loc = cur;
             }
 
-            return _targetObject.Value.transform.DOPunchPosition(loc, _duration, _vibrato, _elasticity);
+            return _targetObject.Value.transform.DOPunchPosition(loc, _duration, _vibrato, _elasticity, _snapping);
         }
     }
 }

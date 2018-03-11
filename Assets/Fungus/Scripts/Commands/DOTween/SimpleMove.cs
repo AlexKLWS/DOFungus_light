@@ -27,6 +27,10 @@ namespace Fungus
         [SerializeField]
         protected bool isLocal;
 
+        [Tooltip("Whether tween should snap to integer values. Affects only position-related tweens")]
+        [SerializeField]
+        protected bool _snapping = false;
+
 
         public override Tween ExecuteTween()
         {
@@ -45,9 +49,9 @@ namespace Fungus
             }
 
             if (isLocal)
-                return _targetObject.Value.transform.DOLocalMove(loc, _duration);
+                return _targetObject.Value.transform.DOLocalMove(loc, _duration, _snapping);
             else
-                return _targetObject.Value.transform.DOMove(loc, _duration);
+                return _targetObject.Value.transform.DOMove(loc, _duration, _snapping);
         }
     }
 }
