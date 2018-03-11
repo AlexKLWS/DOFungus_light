@@ -273,7 +273,7 @@ namespace Fungus
             float duration = (options.moveDuration > 0f) ? options.moveDuration : float.Epsilon;
 
             // All position images must have the same anchor position
-            options.character.State.portraitImage.rectTransform.DOAnchorPos3D(options.toPosition.position, duration).SetEase(stage.FadeEaseType);
+            options.character.State.portraitImage.transform.DOMove(options.toPosition.position, duration).SetEase(stage.FadeEaseType);
 
             if (options.waitUntilFinished)
             {
@@ -281,6 +281,7 @@ namespace Fungus
             }
         }
 
+        //
         #region Public members
 
         /// <summary>
