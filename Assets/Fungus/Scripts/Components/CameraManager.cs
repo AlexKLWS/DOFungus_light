@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Fungus;
 
 namespace Fungus
@@ -21,7 +22,7 @@ namespace Fungus
         [SerializeField] protected Texture2D swipePanIcon;
 
         [Tooltip("Position of continue and swipe icons in normalized screen space coords. (0,0) = top left, (1,1) = bottom right")]
-        [SerializeField] protected Vector2 swipeIconPosition = new Vector2(1,0);
+        [SerializeField] protected Vector2 swipeIconPosition = new Vector2(1, 0);
 
         [Tooltip("Set the camera z coordinate to a fixed value every frame.")]
         [SerializeField] protected bool setCameraZ = true;
@@ -33,7 +34,7 @@ namespace Fungus
         [SerializeField] protected Camera swipeCamera;
 
         protected float fadeAlpha = 0f;
-        
+
         // Swipe panning control
         protected bool swipePanActive;
 
@@ -41,10 +42,12 @@ namespace Fungus
         protected View swipePanViewA;
         protected View swipePanViewB;
         protected Vector3 previousMousePos;
-        
-		//Coroutine handles for panning and fading commands
-		protected IEnumerator panCoroutine;
-		protected IEnumerator fadeCoroutine;
+
+        //Coroutine handles for panning and fading commands
+        protected IEnumerator panCoroutine;
+        protected IEnumerator fadeCoroutine;
+
+        protected Tween panTween;
 
         protected class CameraView
         {
@@ -52,9 +55,9 @@ namespace Fungus
             public Quaternion cameraRot;
             public float cameraSize;
         };
-        
+
         protected Dictionary<string, CameraView> storedViews = new Dictionary<string, CameraView>();
-        
+
         protected virtual void OnGUI()
         {
             if (swipePanActive)
@@ -66,24 +69,24 @@ namespace Fungus
                     float y = Screen.height * swipeIconPosition.y;
                     float width = swipePanIcon.width;
                     float height = swipePanIcon.height;
-                    
+
                     x = Mathf.Max(x, 0);
                     y = Mathf.Max(y, 0);
                     x = Mathf.Min(x, Screen.width - width);
                     y = Mathf.Min(y, Screen.height - height);
-                    
+
                     Rect rect = new Rect(x, y, width, height);
                     GUI.DrawTexture(rect, swipePanIcon);
                 }
             }
-            
+
             // Draw full screen fade texture
             if (fadeAlpha > 0f &&
                 screenFadeTexture != null)
             {
                 // 1 = scene fully visible
                 // 0 = scene fully obscured
-                GUI.color = new Color(1,1,1, fadeAlpha);    
+                GUI.color = new Color(1, 1, 1, fadeAlpha);
                 GUI.depth = -1000;
                 GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), screenFadeTexture);
             }
@@ -93,7 +96,7 @@ namespace Fungus
         {
             float startAlpha = fadeAlpha;
             float timer = 0;
-            
+
             // If already at the target alpha then complete immediately
             if (Mathf.Approximately(startAlpha, targetAlpha))
             {
@@ -105,16 +108,16 @@ namespace Fungus
                 {
                     float t = timer / fadeDuration;
                     timer += Time.deltaTime;
-                    
-                    t = Mathf.Clamp01(t);   
-                    
+
+                    t = Mathf.Clamp01(t);
+
                     fadeAlpha = Mathf.Lerp(startAlpha, targetAlpha, t);
                     yield return null;
                 }
             }
-            
+
             fadeAlpha = targetAlpha;
-            
+
             if (fadeAction != null)
             {
                 fadeAction();
@@ -136,7 +139,7 @@ namespace Fungus
             Vector3 endPos = targetPos;
             Quaternion startRot = camera.transform.rotation;
             Quaternion endRot = targetRot;
-            
+
             bool arrived = false;
             while (!arrived)
             {
@@ -146,7 +149,7 @@ namespace Fungus
                     arrived = true;
                     timer = duration;
                 }
-                
+
                 // Apply smoothed lerp to camera position and orthographic size
                 float t = 1f;
                 if (duration > 0f)
@@ -168,40 +171,8 @@ namespace Fungus
                 {
                     arriveAction();
                 }
-                
+
                 yield return null;
-            }
-        }
-
-        protected virtual IEnumerator PanToPathInternal(Camera camera, float duration, Action arriveAction, Vector3[] path)
-        {
-            if (camera == null)
-            {
-                Debug.LogWarning("Camera is null");
-                yield break;
-            }
-
-            float timer = 0;
-            
-            while (timer < duration)
-            {
-                timer += Time.deltaTime;
-                timer = Mathf.Min(timer, duration);
-                float percent = timer / duration;
-                
-                Vector3 point = iTween.PointOnPath(path, percent);
-                
-                camera.transform.position = new Vector3(point.x, point.y, 0);
-                camera.orthographicSize = point.z;
-
-                SetCameraZ(camera);
-                
-                yield return null;
-            }
-            
-            if (arriveAction != null)
-            {
-                arriveAction();
             }
         }
 
@@ -220,8 +191,8 @@ namespace Fungus
 
             camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, cameraZ);
         }
-        
-        protected virtual void Update() 
+
+        protected virtual void Update()
         {
             if (!swipePanActive)
             {
@@ -235,7 +206,7 @@ namespace Fungus
             }
 
             Vector3 delta = Vector3.zero;
-            
+
             if (Input.touchCount > 0)
             {
                 if (Input.GetTouch(0).phase == TouchPhase.Moved)
@@ -243,12 +214,12 @@ namespace Fungus
                     delta = Input.GetTouch(0).deltaPosition;
                 }
             }
-            
+
             if (Input.GetMouseButtonDown(0))
             {
-                previousMousePos = Input.mousePosition; 
+                previousMousePos = Input.mousePosition;
             }
-            else if (Input.GetMouseButton(0)) 
+            else if (Input.GetMouseButton(0))
             {
                 delta = Input.mousePosition - previousMousePos;
                 previousMousePos = Input.mousePosition;
@@ -258,47 +229,47 @@ namespace Fungus
             cameraDelta.x *= -2f * swipeSpeedMultiplier;
             cameraDelta.y *= -2f * swipeSpeedMultiplier;
             cameraDelta.z = 0f;
-            
+
             Vector3 cameraPos = swipeCamera.transform.position;
-            
+
             cameraPos += cameraDelta;
-            
+
             swipeCamera.transform.position = CalcCameraPosition(cameraPos, swipePanViewA, swipePanViewB);
-            swipeCamera.orthographicSize = CalcCameraSize(cameraPos, swipePanViewA, swipePanViewB); 
+            swipeCamera.orthographicSize = CalcCameraSize(cameraPos, swipePanViewA, swipePanViewB);
         }
-        
+
         // Clamp camera position to region defined by the two views
         protected virtual Vector3 CalcCameraPosition(Vector3 pos, View viewA, View viewB)
         {
             Vector3 safePos = pos;
-            
+
             // Clamp camera position to region defined by the two views
             safePos.x = Mathf.Max(safePos.x, Mathf.Min(viewA.transform.position.x, viewB.transform.position.x));
             safePos.x = Mathf.Min(safePos.x, Mathf.Max(viewA.transform.position.x, viewB.transform.position.x));
             safePos.y = Mathf.Max(safePos.y, Mathf.Min(viewA.transform.position.y, viewB.transform.position.y));
             safePos.y = Mathf.Min(safePos.y, Mathf.Max(viewA.transform.position.y, viewB.transform.position.y));
-            
+
             return safePos;
         }
-        
+
         // Smoothly interpolate camera orthographic size based on relative position to two views
         protected virtual float CalcCameraSize(Vector3 pos, View viewA, View viewB)
         {
             // Get ray and point in same space
             Vector3 toViewB = viewB.transform.position - viewA.transform.position;
             Vector3 localPos = pos - viewA.transform.position;
-            
+
             // Normalize
             float distance = toViewB.magnitude;
             toViewB /= distance;
             localPos /= distance;
-            
+
             // Project point onto ray
             float t = Vector3.Dot(toViewB, localPos);
             t = Mathf.Clamp01(t); // Not really necessary but no harm
-            
+
             float cameraSize = Mathf.Lerp(viewA.ViewSize, viewB.ViewSize, t);
-            
+
             return cameraSize;
         }
 
@@ -330,12 +301,18 @@ namespace Fungus
             {
                 View view = viewList[i];
 
-                Vector3 viewPos = new Vector3(view.transform.position.x, 
-                    view.transform.position.y, 
+                Vector3 viewPos = new Vector3(view.transform.position.x,
+                    view.transform.position.y,
                     view.ViewSize);
                 pathList.Add(viewPos);
             }
-			StartCoroutine(panCoroutine = PanToPathInternal (camera, duration, arriveAction, pathList.ToArray ()));
+
+            if (camera == null)
+                return;
+
+            panTween = camera.transform.DOPath(pathList.ToArray(), duration, PathType.Linear, PathMode.Full3D)
+                  .OnUpdate(() => { camera.orthographicSize = camera.transform.position.z; SetCameraZ(camera); })
+                  .OnComplete(() => arriveAction());
         }
 
         /// <summary>
@@ -344,7 +321,7 @@ namespace Fungus
         public static Texture2D CreateColorTexture(Color color, int width, int height)
         {
             Color[] pixels = new Color[width * height];
-            for (int i = 0; i < pixels.Length; i++) 
+            for (int i = 0; i < pixels.Length; i++)
             {
                 pixels[i] = color;
             }
@@ -352,9 +329,9 @@ namespace Fungus
             texture.SetPixels(pixels);
             texture.Apply();
 
-            return texture;     
+            return texture;
         }
-            
+
         /// <summary>
         /// Full screen texture used for screen fade effect.
         /// </summary>
@@ -366,7 +343,7 @@ namespace Fungus
         /// </summary>
         public virtual void Fade(float targetAlpha, float fadeDuration, Action fadeAction)
         {
-			StartCoroutine(fadeCoroutine = FadeInternal (targetAlpha, fadeDuration, fadeAction));
+            StartCoroutine(fadeCoroutine = FadeInternal(targetAlpha, fadeDuration, fadeAction));
         }
 
         /// <summary>
@@ -392,13 +369,15 @@ namespace Fungus
             }
 
             // Fade out
-            Fade(1f, outDuration, delegate {
+            Fade(1f, outDuration, delegate
+            {
 
                 // Snap to new view
                 PanToPosition(camera, view.transform.position, view.transform.rotation, view.ViewSize, 0f, null);
 
                 // Fade in
-                Fade(0f, inDuration, delegate {
+                Fade(0f, inDuration, delegate
+                {
                     if (fadeAction != null)
                     {
                         fadeAction();
@@ -413,8 +392,8 @@ namespace Fungus
         public virtual void Stop()
         {
             StopAllCoroutines();
-			panCoroutine = null;
-			fadeCoroutine = null;
+            panCoroutine = null;
+            fadeCoroutine = null;
         }
 
         /// <summary>
@@ -429,10 +408,12 @@ namespace Fungus
             }
 
             // Stop any pan that is currently active
-			if (panCoroutine != null) {
-				StopCoroutine(panCoroutine);
-				panCoroutine = null;
-			}
+            if (panCoroutine != null)
+            {
+                StopCoroutine(panCoroutine);
+                panCoroutine = null;
+            }
+            DOTween.Kill(camera.gameObject);
             swipePanActive = false;
 
             if (Mathf.Approximately(duration, 0f))
@@ -451,7 +432,7 @@ namespace Fungus
             }
             else
             {
-				StartCoroutine(panCoroutine = PanInternal(camera, targetPosition, targetRotation, targetSize, duration, arriveAction));
+                StartCoroutine(panCoroutine = PanInternal(camera, targetPosition, targetRotation, targetSize, duration, arriveAction));
             }
         }
 
@@ -473,9 +454,10 @@ namespace Fungus
             Vector3 cameraPos = camera.transform.position;
 
             Vector3 targetPosition = CalcCameraPosition(cameraPos, swipePanViewA, swipePanViewB);
-            float targetSize = CalcCameraSize(cameraPos, swipePanViewA, swipePanViewB); 
+            float targetSize = CalcCameraSize(cameraPos, swipePanViewA, swipePanViewB);
 
-            PanToPosition(camera, targetPosition, Quaternion.identity, targetSize, duration, delegate {
+            PanToPosition(camera, targetPosition, Quaternion.identity, targetSize, duration, delegate
+            {
 
                 swipePanActive = true;
                 swipeCamera = camera;
@@ -484,7 +466,7 @@ namespace Fungus
                 {
                     arriveAction();
                 }
-            }); 
+            });
         }
 
         /// <summary>

@@ -87,8 +87,8 @@ namespace Fungus
             {
                 ourTween.SetEase(_easeType)
                         .SetLoops(_repeats, _loopType);
-            } 
-            else 
+            }
+            else
             {
                 ourTween.SetEase(_easeType);
             }

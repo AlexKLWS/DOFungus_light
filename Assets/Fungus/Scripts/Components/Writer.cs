@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System;
 using System.Reflection;
 using System.Text;
+using DG.Tweening;
 
 namespace Fungus
 {
@@ -734,7 +735,7 @@ namespace Fungus
 
             if (go != null)
             {
-                iTween.ShakePosition(go, axis, time);
+                go.transform.DOShakePosition(time, axis);
             }
         }
         
