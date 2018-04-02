@@ -22,7 +22,7 @@ namespace Fungus
         [SerializeField] protected bool dimPortraits;
 
         [Tooltip("Choose a dimColor")]
-        [SerializeField] protected Color dimColor =new Color(0.5f, 0.5f, 0.5f, 1f);
+        [SerializeField] protected Color dimColor = new Color(0.5f, 0.5f, 0.5f, 1f);
 
         [Tooltip("Duration for fading character portraits in / out.")]
         [SerializeField] protected float fadeDuration = 0.5f;
@@ -153,7 +153,7 @@ namespace Fungus
 
             for (int i = 0; i < positions.Count; i++)
             {
-                if ( String.Compare(positions[i].name, positionString, true) == 0 )
+                if (String.Compare(positions[i].name, positionString, true) == 0)
                 {
                     return positions[i];
                 }

@@ -15,7 +15,7 @@ namespace Fungus
     public enum ExecutionState
     {
         /// <summary> No command executing </summary>
-        Idle,       
+        Idle,
         /// <summary> Executing a command </summary>
         Executing,
     }
@@ -102,7 +102,7 @@ namespace Fungus
             {
                 var command = commandList[i];
                 if (command == null)// Null entry will be deleted automatically later
-                
+
                 {
                     continue;
                 }
@@ -214,7 +214,7 @@ namespace Fungus
             executionState = ExecutionState.Executing;
             BlockSignals.DoBlockStart(this);
 
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             // Select the executing block & the first command
             flowchart.SelectedBlock = this;
             if (commandList.Count > 0)
@@ -222,7 +222,7 @@ namespace Fungus
                 flowchart.ClearSelectedCommands();
                 flowchart.AddSelectedCommand(commandList[0]);
             }
-            #endif
+#endif
 
             jumpToCommandIndex = commandIndex;
 
@@ -238,7 +238,7 @@ namespace Fungus
 
                 // Skip disabled commands, comments and labels
                 while (i < commandList.Count &&
-                      (!commandList[i].enabled || 
+                      (!commandList[i].enabled ||
                         commandList[i].GetType() == typeof(Comment) ||
                         commandList[i].GetType() == typeof(Label)))
                 {
@@ -287,12 +287,12 @@ namespace Fungus
                     yield return null;
                 }
 
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 if (flowchart.StepPause > 0f)
                 {
                     yield return new WaitForSeconds(flowchart.StepPause);
                 }
-                #endif
+#endif
 
                 command.IsExecuting = false;
             }

@@ -81,6 +81,11 @@ namespace Fungus
 
             ourTween = ExecuteTween();
 
+            if(ourTween == null){
+                Continue();
+                return;
+            }
+
             ourTween.SetId(_tweenId);
 
             if (_repeats != 0)
