@@ -26,6 +26,7 @@ namespace Fungus
 
         [Tooltip("The name text UI object")]
         [SerializeField] protected Text nameText;
+        public virtual Text NameText { get { return nameText; } }
 
         [Tooltip("The story text UI object")]
         [SerializeField] protected Text storyText;

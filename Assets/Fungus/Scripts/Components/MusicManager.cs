@@ -13,10 +13,17 @@ namespace Fungus
     [RequireComponent(typeof(AudioSource))]
     public class MusicManager : MonoBehaviour
     {
+        protected AudioSource audioSource;
+
+        protected virtual void Awake()
+        {
+            audioSource = GetComponent<AudioSource>();            
+        }
+
         protected virtual void Start()
         {
-            GetComponent<AudioSource>().playOnAwake = false;
-            GetComponent<AudioSource>().loop = true;
+            audioSource.playOnAwake = false;
+            audioSource.loop = true;
         }
 
         #region Public members
@@ -27,7 +34,6 @@ namespace Fungus
         /// </summary>
         public void PlayMusic(AudioClip musicClip, bool loop, float fadeDuration, float atTime)
         {
-            AudioSource audioSource = GetComponent<AudioSource>();
             if (audioSource == null || audioSource.clip == musicClip)
             {
                 return;
@@ -63,7 +69,7 @@ namespace Fungus
         /// <param name="volume">The volume level of the sound effect.</param>
         public virtual void PlaySound(AudioClip soundClip, float volume)
         {
-            GetComponent<AudioSource>().PlayOneShot(soundClip, volume);
+            audioSource.PlayOneShot(soundClip, volume);
         }
 
         /// <summary>
@@ -74,11 +80,9 @@ namespace Fungus
         /// <param name="onComplete">A delegate method to call when the pitch shift has completed.</param>
         public virtual void SetAudioPitch(float pitch, float duration, System.Action onComplete)
         {
-            AudioSource audio = GetComponent<AudioSource>();
-
             if (Mathf.Approximately(duration, 0f))
             {
-                audio.pitch = pitch;
+                audioSource.pitch = pitch;
                 if (onComplete != null)
                 {
                     onComplete();
@@ -86,7 +90,7 @@ namespace Fungus
                 return;
             }
 
-            DOTween.To(() => audio.pitch, (pNewValue) => audio.pitch = pNewValue, pitch, duration)
+            DOTween.To(() => audioSource.pitch, (pNewValue) => audioSource.pitch = pNewValue, pitch, duration)
                .OnComplete(() => {
                 if (onComplete != null)
                 {
@@ -103,19 +107,17 @@ namespace Fungus
         /// <param name="onComplete">Delegate function to call when fade completes.</param>
         public virtual void SetAudioVolume(float volume, float duration, System.Action onComplete)
         {
-            AudioSource audio = GetComponent<AudioSource>();
-
             if (Mathf.Approximately(duration, 0f))
             {
 				if (onComplete != null)
 				{
 					onComplete();
 				}				
-                audio.volume = volume;
+                audioSource.volume = volume;
                 return;
             }
 
-            DOTween.To(() => audio.volume, (pNewValue) => audio.volume = pNewValue, volume, duration)
+            DOTween.To(() => audioSource.volume, (pNewValue) => audioSource.volume = pNewValue, volume, duration)
                .OnComplete(() => {
                    if (onComplete != null)
                    {
@@ -129,7 +131,8 @@ namespace Fungus
         /// </summary>
         public virtual void StopMusic()
         {
-            GetComponent<AudioSource>().Stop();
+            audioSource.Stop();
+            audioSource.clip = null;
         }
 
         #endregion
