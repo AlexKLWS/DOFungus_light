@@ -66,8 +66,14 @@ namespace Fungus
         {
             if (writerState == WriterState.End)
             {
-                AddLine(SayDialog.GetSayDialog().NameText.text,
-                    SayDialog.GetSayDialog().StoryText.text);
+                string nameText = SayDialog.GetSayDialog().NameText != null
+                                           ? SayDialog.GetSayDialog().NameText.text
+                                           : string.Empty;
+                string dialogText = SayDialog.GetSayDialog().StoryText != null
+                                             ? SayDialog.GetSayDialog().StoryText.text
+                                             : string.Empty;
+                AddLine(nameText,
+                        dialogText);
             }
         }
 
