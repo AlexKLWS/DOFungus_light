@@ -444,7 +444,7 @@ namespace Fungus
             float duration = (options.fadeDuration > 0f) ? options.fadeDuration : float.Epsilon;
 
             // Fade out a duplicate of the existing portrait image
-            if (options.character.State.portraitImage != null)
+            if (options.character.State.portraitImage != null && options.character.State.portraitImage.sprite != null)
             {
                 GameObject tempGO = GameObject.Instantiate(options.character.State.portraitImage.gameObject);
                 tempGO.transform.SetParent(options.character.State.portraitImage.transform, false);
